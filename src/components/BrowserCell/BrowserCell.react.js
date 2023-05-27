@@ -44,13 +44,26 @@ export default class BrowserCell extends Component {
         this.copyableValue = content = '(undefined)';
         classes.push(styles.empty);
       }
-      content = isNewRow && this.props.isRequired && this.props.value === undefined ? '(required)' : content;
+      content = isNewRow && this.props.isRequired ? '(required)' : content;
     } else if (this.props.value === null) {
       this.copyableValue = content = '(null)';
       classes.push(styles.empty);
     } else if (this.props.value === '') {
       content = <span>&nbsp;</span>;
       classes.push(styles.empty);
+    } else if (this.props.className === '_Role' && this.props.field === 'name' && this.props.value.includes('_')) {
+      const arr = this.props.value.split('_');
+      const className = arr[0] === 'User' ? '_User' : arr[0];
+      const objectId = arr[1].split('_')[0];
+      const obj = className === '_User' ? Parse.User.createWithoutData(objectId): new Parse.Object(className);
+      obj.id = objectId;
+      content = this.props.onPointerClick ? (
+        <Pill value={ this.props.value } onClick={this.props.onPointerClick.bind(undefined, obj)} followClick={true} shrinkablePill />
+      ) : (
+        this.props.value
+      );
+      this.copyableValue = objectId;
+
     } else if (this.props.type === 'Pointer') {
       const defaultPointerKey = ColumnPreferences.getPointerDefaultKey(this.props.appId, this.props.value.className);
       let dataValue = this.props.value.id;
