@@ -287,6 +287,16 @@ class Browser extends DashboardView {
       await Parse.User.logOut();
     }
 
+    if(!password) {
+      const query = new Parse.Query('_Session');
+      query.equalTo('user', username);
+      const session = await query.first({useMasterKey: true});
+      console.log('session:', session);
+      if(session) {
+         await Parse.User.become(session.get('sessionToken'));
+      }
+    }
+
     const currentUser = await Parse.User.logIn(username, password);
     this.setState({ currentUser: currentUser, useMasterKey: false }, () => this.refresh());
   }

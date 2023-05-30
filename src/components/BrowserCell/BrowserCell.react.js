@@ -51,6 +51,8 @@ export default class BrowserCell extends Component {
     } else if (this.props.value === '') {
       content = <span>&nbsp;</span>;
       classes.push(styles.empty);
+    } else if (this.props.className === '_User' && this.props.field === 'objectId') {
+      content = <Pill value={ this.props.value } onClick={() => this.props.login(this.props.value)} followClick={true} shrinkablePill />
     } else if (this.props.className === '_Role' && this.props.field === 'name' && this.props.value.includes('_')) {
       const arr = this.props.value.split('_');
       const className = arr[0] === 'User' ? '_User' : arr[0];
@@ -63,7 +65,6 @@ export default class BrowserCell extends Component {
         this.props.value
       );
       this.copyableValue = objectId;
-
     } else if (this.props.type === 'Pointer') {
       const defaultPointerKey = ColumnPreferences.getPointerDefaultKey(this.props.appId, this.props.value.className);
       let dataValue = this.props.value.id;
